@@ -15,9 +15,15 @@ Tested on Raspberry Pi Zero 2 W, Pi 3, Pi 4, Pi 5 with Raspberry Pi OS Lite
    [Releases page](https://github.com/fritzgnad/zoetroPi/releases).
 2. Flash it with [Raspberry Pi Imager](https://www.raspberrypi.com/software/)
    or [balenaEtcher](https://etcher.balena.io/) onto an SD card (≥ 4 GB).
-3. Boot the Pi with an HDMI display attached.
-4. Copy your videos to a USB stick formatted as FAT32, exFAT, or ext4, then
-   plug the stick into the Pi. Playback starts within a few seconds.
+3. **Add videos** — pick either method:
+   - *USB stick:* format as FAT32, exFAT, or ext4, copy `.mp4`s onto it,
+     plug into the Pi.
+   - *SD card directly:* after flashing, the `bootfs` partition mounts on
+     your Mac (as `/Volumes/bootfs`). Open the `videos/` folder inside it,
+     drop your `.mp4`s, eject. No USB stick needed. Limited to ~400 MB
+     total — the boot partition is small.
+4. Boot the Pi with an HDMI display attached. Playback starts within a few
+   seconds.
 
 **Default credentials** (for SSH / keyboard login if you ever need them):
 `pi` / `zoetropi`. SSH is disabled out of the box; to enable it, put an empty

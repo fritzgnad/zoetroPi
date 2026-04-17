@@ -7,7 +7,8 @@
 set -u
 
 MEDIA=/media/zoetropi
-EXTRA_DIR=/opt/zoetropi/videos   # fallback: videos baked into the image
+BOOTFS_DIR=/boot/firmware/videos  # fallback: videos dropped onto the SD's FAT partition
+EXTRA_DIR=/opt/zoetropi/videos    # fallback: videos baked into the image
 MPV_CONF=/etc/zoetropi/mpv.conf
 
 mkdir -p "$MEDIA"
@@ -90,10 +91,12 @@ while true; do
         fi
     fi
 
-    # Prefer USB content; fall back to any videos shipped with the image.
+    # Source priority: USB stick > videos on the SD's FAT partition > baked-in.
     videos_src=""
     if mountpoint -q "$MEDIA" && [ -n "$(collect_videos "$MEDIA")" ]; then
         videos_src="$MEDIA"
+    elif [ -d "$BOOTFS_DIR" ] && [ -n "$(collect_videos "$BOOTFS_DIR")" ]; then
+        videos_src="$BOOTFS_DIR"
     elif [ -d "$EXTRA_DIR" ] && [ -n "$(collect_videos "$EXTRA_DIR")" ]; then
         videos_src="$EXTRA_DIR"
     fi

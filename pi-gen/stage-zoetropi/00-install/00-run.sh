@@ -19,6 +19,30 @@ install -D -m 0644 "${FILES}/zoetropi.service" \
 install -d -m 0755 "${ROOTFS_DIR}/media/zoetropi"
 install -d -m 0755 "${ROOTFS_DIR}/opt/zoetropi/videos"
 
+# Drop folder visible from macOS/Windows once the SD is re-inserted.
+# Lives on the FAT boot partition — no Linux mounting needed on the host.
+for BOOTDIR in "${ROOTFS_DIR}/boot/firmware" "${ROOTFS_DIR}/boot"; do
+    [ -d "$BOOTDIR" ] || continue
+    install -d -m 0755 "${BOOTDIR}/videos"
+    cat > "${BOOTDIR}/videos/README.txt" <<'README'
+zoetroPi — drop videos here
+============================
+
+Copy .mp4 / .mov / .mkv / .webm files into this folder.
+On the next boot the Pi will play them fullscreen, looped forever.
+
+Priority order used by the player:
+  1. a plugged-in USB stick containing videos
+  2. this folder (videos on the SD's boot partition)
+  3. anything baked into /opt/zoetropi/videos
+
+Notes:
+  - The boot partition is small (~512 MB). For large collections, use a
+    USB stick or bake videos into the image via the zoetroPi repo.
+  - Deleting this README is fine.
+README
+done
+
 # Ship any bundled videos that the builder dropped alongside our files.
 if compgen -G "${FILES}/videos/*" >/dev/null; then
     install -d -m 0755 "${ROOTFS_DIR}/opt/zoetropi/videos"

@@ -35,6 +35,11 @@ install -D -m 0644 "$HERE/systemd/zoetropi.service" /etc/systemd/system/zoetropi
 echo "==> Preparing media + fallback video directories"
 install -d -m 0755 /media/zoetropi
 install -d -m 0755 /opt/zoetropi/videos
+for BOOTDIR in /boot/firmware /boot; do
+    [ -d "$BOOTDIR" ] || continue
+    install -d -m 0755 "$BOOTDIR/videos"
+    break
+done
 
 echo "==> Silencing tty1 login prompt"
 systemctl disable --now getty@tty1.service 2>/dev/null || true
