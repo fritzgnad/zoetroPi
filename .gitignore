@@ -1,0 +1,6 @@
+*.img
+*.img.xz
+*.zip
+deploy/
+work/
+.DS_Store

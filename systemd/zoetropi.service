@@ -1,0 +1,26 @@
+[Unit]
+Description=ZoetroPi fullscreen video loop
+After=multi-user.target systemd-user-sessions.service
+Conflicts=getty@tty1.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=root
+TTYPath=/dev/tty1
+TTYReset=yes
+TTYVHangup=yes
+TTYVTDisallocate=yes
+StandardInput=tty-force
+StandardOutput=tty
+StandardError=journal
+Environment=HOME=/root
+Environment=XDG_RUNTIME_DIR=/run/zoetropi
+RuntimeDirectory=zoetropi
+ExecStartPre=/bin/sh -c 'chvt 1 || true'
+ExecStart=/usr/local/bin/zoetropi-play.sh
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

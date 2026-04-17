@@ -1,0 +1,52 @@
+name: Build ZoetroPi image
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Stage files for pi-gen
+        run: |
+          chmod +x pi-gen/sync-stage-files.sh
+          ./pi-gen/sync-stage-files.sh
+
+      - name: Build image with pi-gen
+        uses: usimd/pi-gen-action@v1
+        with:
+          image-name: zoetropi
+          hostname: zoetropi
+          username: pi
+          password: zoetropi
+          locale: en_US.UTF-8
+          timezone: Etc/UTC
+          keyboard-layout: us
+          wpa-essid: ""
+          wpa-password: ""
+          enable-ssh: 0
+          release: bookworm
+          stage-list: stage0 stage1 stage2 ./pi-gen/stage-zoetropi
+          verbose-output: true
+          compression: xz
+          compression-level: 9
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zoetropi-image
+          path: ${{ github.workspace }}/*.img.xz
+
+      - name: Attach to release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ github.workspace }}/*.img.xz
