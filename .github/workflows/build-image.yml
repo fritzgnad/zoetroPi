@@ -8,7 +8,9 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # Native ARM64 runner: pi-gen builds without QEMU emulation. Much faster
+    # and avoids the binfmt_misc / arm64-not-supported failure on x86_64.
+    runs-on: ubuntu-24.04-arm
     permissions:
       contents: write
     steps:
@@ -19,11 +21,6 @@ jobs:
         run: |
           chmod +x pi-gen/sync-stage-files.sh
           ./pi-gen/sync-stage-files.sh
-
-      - name: Set up QEMU (arm64 binfmt_misc)
-        uses: docker/setup-qemu-action@v3
-        with:
-          platforms: arm64
 
       - name: Build image with pi-gen
         uses: usimd/pi-gen-action@v1
