@@ -36,6 +36,7 @@ jobs:
           wpa-essid: ""
           wpa-password: ""
           enable-ssh: 0
+          disable-first-boot-user-rename: 1
           release: trixie
           stage-list: stage0 stage1 stage2 ./pi-gen/stage-zoetropi
           verbose-output: true
