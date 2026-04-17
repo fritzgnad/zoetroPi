@@ -5,7 +5,7 @@ Drop `.mp4` files onto a USB stick, plug it in, power the Pi — the videos play
 fullscreen and loop forever. No desktop, no splash, no mouse pointer, no nothing.
 
 Tested on Raspberry Pi Zero 2 W, Pi 3, Pi 4, Pi 5 with Raspberry Pi OS Lite
-(Bookworm, 64-bit).
+(Trixie or Bookworm, 64-bit).
 
 ---
 

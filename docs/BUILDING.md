@@ -38,7 +38,7 @@ ln -s ../zoetroPi/pi-gen/stage-zoetropi ./stage-zoetropi
 
 cat > config <<'EOF'
 IMG_NAME=zoetropi
-RELEASE=bookworm
+RELEASE=trixie
 TARGET_HOSTNAME=zoetropi
 FIRST_USER_NAME=pi
 FIRST_USER_PASS=zoetropi

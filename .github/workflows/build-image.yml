@@ -35,7 +35,7 @@ jobs:
           wpa-essid: ""
           wpa-password: ""
           enable-ssh: 0
-          release: bookworm
+          release: trixie
           stage-list: stage0 stage1 stage2 ./pi-gen/stage-zoetropi
           verbose-output: true
           compression: xz
