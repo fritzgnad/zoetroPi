@@ -1,5 +1,7 @@
 # zoetroPi
 
+![zoetroPi banner](zoetroPi_banner.jpg)
+
 Turn a Raspberry Pi into a silent, no-UI video-loop appliance for art installations.
 Drop `.mp4` files onto a USB stick, plug it in, power the Pi — the videos play
 fullscreen and loop forever. No desktop, no splash, no mouse pointer, no nothing.
