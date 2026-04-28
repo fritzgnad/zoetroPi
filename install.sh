@@ -64,8 +64,15 @@ fi
 echo "==> Patching config.txt"
 CONFIG=/boot/firmware/config.txt
 [ -f "$CONFIG" ] || CONFIG=/boot/config.txt
-if [ -f "$CONFIG" ] && ! grep -q '^disable_splash=1' "$CONFIG"; then
-    printf '\n# Added by zoetroPi\ndisable_splash=1\n' >> "$CONFIG"
+if [ -f "$CONFIG" ]; then
+    additions=""
+    grep -q '^disable_splash=1'     "$CONFIG" || additions="${additions}disable_splash=1\n"
+    grep -q '^disable_overscan=1'   "$CONFIG" || additions="${additions}disable_overscan=1\n"
+    grep -q '^gpu_mem='             "$CONFIG" || additions="${additions}gpu_mem=128\n"
+    grep -q '^initial_turbo='       "$CONFIG" || additions="${additions}initial_turbo=20\n"
+    grep -q '^dtparam=sd_poll_once' "$CONFIG" || additions="${additions}dtparam=sd_poll_once\n"
+    grep -q '^enable_uart='         "$CONFIG" || additions="${additions}enable_uart=0\n"
+    [ -n "$additions" ] && printf "\n# Added by zoetroPi\n${additions}" >> "$CONFIG"
 fi
 
 echo "==> Blanking /etc/issue so no banner can flash"

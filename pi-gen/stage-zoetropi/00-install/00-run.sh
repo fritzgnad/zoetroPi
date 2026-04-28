@@ -60,7 +60,17 @@ for CMDLINE in "${ROOTFS_DIR}/boot/firmware/cmdline.txt" "${ROOTFS_DIR}/boot/cmd
 done
 for CONFIG in "${ROOTFS_DIR}/boot/firmware/config.txt" "${ROOTFS_DIR}/boot/config.txt"; do
     [ -f "$CONFIG" ] || continue
-    grep -q '^disable_splash=1' "$CONFIG" || printf '\n# ZoetroPi\ndisable_splash=1\n' >> "$CONFIG"
+    additions=""
+    grep -q '^disable_splash=1'     "$CONFIG" || additions="${additions}disable_splash=1\n"
+    grep -q '^disable_overscan=1'   "$CONFIG" || additions="${additions}disable_overscan=1\n"
+    # 128 MB GPU/VPU memory: ensures V4L2 M2M hardware decoder has headroom on all Pi models.
+    grep -q '^gpu_mem='             "$CONFIG" || additions="${additions}gpu_mem=128\n"
+    # 20 s of sustained-clock boost on first boot speeds up systemd startup.
+    grep -q '^initial_turbo='       "$CONFIG" || additions="${additions}initial_turbo=20\n"
+    # Poll the SD card only once — shaves ~1-2 s from subsequent boots.
+    grep -q '^dtparam=sd_poll_once' "$CONFIG" || additions="${additions}dtparam=sd_poll_once\n"
+    grep -q '^enable_uart='         "$CONFIG" || additions="${additions}enable_uart=0\n"
+    [ -n "$additions" ] && printf "\n# ZoetroPi\n${additions}" >> "$CONFIG"
 done
 
 : > "${ROOTFS_DIR}/etc/issue"
