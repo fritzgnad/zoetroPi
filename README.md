@@ -90,11 +90,56 @@ No desktop, no Wayland, no X. `mpv` draws directly to the KMS/DRM framebuffer.
 | Pi 4           | H.264 or H.265 | 1080p60 or 4K30 (H.265)  |
 | Pi 5           | H.264 or H.265 | 4K60                     |
 
-- Encode with `ffmpeg -c:v libx264 -preset slow -crf 20 -pix_fmt yuv420p`.
-- Match the resolution, frame rate, and codec across all clips in a playlist
-  to get gapless transitions — mpv can't seamlessly cross between differently
-  shaped streams.
-- For a single-file loop, just put one video on the stick.
+zoetroPi uses the Pi's V4L2 M2M hardware decoder (`--hwdec=v4l2m2m-copy`), so
+the video format must match what the decoder supports. Use **yuv420p** pixel
+format and **level 4.0** or lower for H.264 — higher profiles or 10-bit colour
+will fall back to software decoding and cause stutter.
+
+### ffmpeg encode examples
+
+**Pi Zero 2 W / Pi 3 — H.264, 1080p30:**
+
+```bash
+ffmpeg -i input.mov \
+  -c:v libx264 -preset slow -crf 20 \
+  -vf "scale=1920:1080,fps=30" \
+  -pix_fmt yuv420p \
+  -profile:v high -level:v 4.0 \
+  -movflags +faststart \
+  -c:a aac -b:a 128k \
+  output.mp4
+```
+
+**Pi 4 — H.264, 1080p60:**
+
+```bash
+ffmpeg -i input.mov \
+  -c:v libx264 -preset slow -crf 20 \
+  -vf "scale=1920:1080,fps=60" \
+  -pix_fmt yuv420p \
+  -profile:v high -level:v 4.2 \
+  -movflags +faststart \
+  -c:a aac -b:a 128k \
+  output.mp4
+```
+
+**Pi 4 / Pi 5 — H.265 (HEVC), 4K30:**
+
+```bash
+ffmpeg -i input.mov \
+  -c:v libx265 -preset slow -crf 22 \
+  -vf "scale=3840:2160,fps=30" \
+  -pix_fmt yuv420p \
+  -tag:v hvc1 \
+  -movflags +faststart \
+  -c:a aac -b:a 128k \
+  output.mp4
+```
+
+> **Tip — silent loop:** drop `-c:a` and add `-an` to strip audio entirely.
+> For gapless playlist transitions, all clips must share the same resolution,
+> frame rate, and codec — mpv can't seamlessly cross between differently shaped
+> streams. For a single-clip loop this doesn't matter.
 
 ---
 

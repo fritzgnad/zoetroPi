@@ -55,7 +55,9 @@ run_mpv() {
         --fullscreen
         --vo=gpu
         --gpu-context=drm
-        --hwdec=auto-safe
+        --hwdec=v4l2m2m-copy
+        --hwdec-codecs=all
+        --video-sync=display-resample
         --loop-playlist=inf
         --loop-file=inf
         --keep-open=always
