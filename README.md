@@ -97,18 +97,39 @@ will fall back to software decoding and cause stutter.
 
 ### ffmpeg encode examples
 
-**Pi Zero 2 W / Pi 3 — H.264, 1080p30:**
+**Pi Zero 2 W / Pi 3 — H.264, 720p24** *(recommended for smoothest playback)*:
 
 ```bash
 ffmpeg -i input.mov \
-  -c:v libx264 -preset slow -crf 20 \
-  -vf "scale=1920:1080,fps=30" \
+  -c:v libx264 -preset slow -crf 22 \
+  -vf "scale=1280:720,fps=24" \
   -pix_fmt yuv420p \
-  -profile:v high -level:v 4.0 \
+  -profile:v high -level:v 3.1 \
+  -b:v 4M -maxrate 5M -bufsize 8M \
   -movflags +faststart \
   -c:a aac -b:a 128k \
   output.mp4
 ```
+
+If you need 1080p on a Pi 3, keep it at 30 fps and cap the bitrate:
+
+```bash
+ffmpeg -i input.mov \
+  -c:v libx264 -preset slow -crf 22 \
+  -vf "scale=1920:1080,fps=30" \
+  -pix_fmt yuv420p \
+  -profile:v high -level:v 4.0 \
+  -b:v 8M -maxrate 10M -bufsize 16M \
+  -movflags +faststart \
+  -c:a aac -b:a 128k \
+  output.mp4
+```
+
+> **Pi 3 GPU tip:** the Pi 3's VideoCore IV pays extra overhead when mpv uses
+> the `gpu` renderer. For smoother playback, SSH into the Pi and add
+> `vo=drm` to `/etc/zoetropi/mpv.conf` — this writes directly to the
+> framebuffer without GPU compositing. Trade-off: no GPU scaling, so the
+> video resolution must match the display's native resolution exactly.
 
 **Pi 4 — H.264, 1080p60:**
 
